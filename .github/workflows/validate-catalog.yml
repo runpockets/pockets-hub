@@ -1,0 +1,44 @@
+name: Validate Pockets Hub catalog
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run validator unit tests
+        run: node --test scripts/validate-catalog.test.mjs
+
+      - name: Extract base catalog on pull requests
+        if: github.event_name == 'pull_request'
+        run: |
+          git show "origin/${GITHUB_BASE_REF}:catalog.json" > /tmp/base-catalog.json || true
+
+      - name: Validate catalog.json and all listed Pocket repositories
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALLOW_VERIFIED_CHANGE: ${{ contains(github.event.pull_request.labels.*.name, 'maintainer-verified') && '1' || '0' }}
+        run: |
+          if [ -s /tmp/base-catalog.json ]; then
+            node scripts/validate-catalog.mjs catalog.json --base /tmp/base-catalog.json
+          else
+            node scripts/validate-catalog.mjs catalog.json
+          fi

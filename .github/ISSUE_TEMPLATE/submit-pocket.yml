@@ -1,0 +1,36 @@
+name: Submit a Pocket
+description: Propose a public Pocket repository to be added to Pockets Hub.
+title: "Submit Pocket: "
+labels: ["submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Submit your public Pocket repository to **Pockets Hub**.
+        If you're comfortable opening a Pull Request directly, you can also edit `catalog.json` on GitHub.
+  - type: input
+    id: repo
+    attributes:
+      label: GitHub Repository
+      description: Public GitHub repository slug (`owner/repo`).
+      placeholder: owner/my-pocket
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: What does this Pocket do?
+      description: Short summary of the app and any external APIs or runtime variables it uses.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Readiness checks
+      options:
+        - label: Repository is public and contains root `pocket.yaml`, `Containerfile`, `README.md`, and `LICENSE`
+          required: true
+        - label: "`Containerfile` ends with a non-root `USER` and contains no hardcoded secrets"
+          required: true
+        - label: Tested in Pockets locally (Preview and Build & start)
+          required: true

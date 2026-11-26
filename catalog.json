@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "pockets": [
+    {
+      "repo": "runpockets/coinkiwi",
+      "name": "CoinKiwi",
+      "description": "Self-hosted crypto portfolio and price tracker.",
+      "verified": true
+    }
+  ]
+}
